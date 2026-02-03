@@ -1,13 +1,18 @@
 import {prisma} from "../lib/prisma.js";
 
 export const addTask = async (req , res) => {
-    const {title, description, completed, priority} = req.body;
+    const {title, description, completed, priority,categoryId} = req.body;
+    if (categoryId) {
+    const category = await prisma.category.findUnique({ where: { id: categoryId } });
+    if (!category) return res.status(400).json({ message: "Category not found" });
+  }
     const task = await prisma.task.create({
         data: {
             title : title,
             description: description,
             completed: completed,
-            priority: priority
+            priority: priority,
+            categoryId: categoryId
         }
     });
     return res.status(200).json({ message: "Task created successfully" , task: task });
@@ -22,6 +27,7 @@ export const allTasks = async (req , res) => {
             completed: completed === "true"
         })
         },
+        include: { category: true },
         orderBy: {
             createdAt: "desc"
         }
@@ -34,7 +40,7 @@ export const taskById = async (req , res) => {
         where : {
             id: id,
             deletedAt: null
-        }
+        },include: { category: true },
     })
     if(!task) {
         return res.status(400).json({ message: "Task not found" });
@@ -43,7 +49,7 @@ export const taskById = async (req , res) => {
 }
 export const updateTask = async (req , res) => {
     const { id } = req.params;
-    const { title, description, completed, priority } = req.body;
+    const { title, description, completed, priority, categoryId  } = req.body;
     const task = await prisma.task.findFirst({
     where: {
       id: id,
@@ -53,6 +59,14 @@ export const updateTask = async (req , res) => {
   if (!task) {
     return res.status(400).json({ message: "Task not found" });
   }
+  if (categoryId) {
+    const category = await prisma.category.findUnique({ 
+        where: { 
+            id: categoryId 
+        } 
+    });
+    if (!category) return res.status(400).json({ message: "Category not found" });
+  }
   await prisma.task.update({
     where: {
       id: id
@@ -61,7 +75,8 @@ export const updateTask = async (req , res) => {
       title: title,
       description: description,
       completed: completed,
-      priority: priority
+      priority: priority,
+      categoryId: categoryId
     }
   });
   return res.status(200).json({ message: "Task updated successfully" });

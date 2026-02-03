@@ -54,8 +54,21 @@ export const validations = {
       .withMessage("Priority is required")
       .isIn(["LOW", "MEDIUM", "HIGH"])
       .withMessage("Priority must be LOW, MEDIUM, or HIGH")
-  ]
+  ],
+  addCategory: [
+    check("name")
+      .notEmpty()
+      .withMessage("Name is required")
+      .isString()
+      .withMessage("Name must be a string")
+      .isLength({ min: 2, max: 100 })
+      .withMessage("Name must be between 2 and 100 characters")
+    ]
 };
+
+    
+
+
 //error handling middleware
 export const errorValidatorHandler = (req, res, next) => {
     const errors = validationResult(req); // Corrected to use validationResult
