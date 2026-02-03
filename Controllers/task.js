@@ -1,12 +1,13 @@
 import {prisma} from "../lib/prisma.js";
 
 export const addTask = async (req , res) => {
-    const {title, description, completed} = req.body;
+    const {title, description, completed, priority} = req.body;
     const task = await prisma.task.create({
         data: {
             title : title,
             description: description,
-            completed: completed
+            completed: completed,
+            priority: priority
         }
     });
     return res.status(200).json({ message: "Task created successfully" , task: task });
@@ -42,7 +43,7 @@ export const taskById = async (req , res) => {
 }
 export const updateTask = async (req , res) => {
     const { id } = req.params;
-    const { title, description, completed } = req.body;
+    const { title, description, completed, priority } = req.body;
     const task = await prisma.task.findFirst({
     where: {
       id: id,
@@ -59,7 +60,8 @@ export const updateTask = async (req , res) => {
     data: {
       title: title,
       description: description,
-      completed: completed
+      completed: completed,
+      priority: priority
     }
   });
   return res.status(200).json({ message: "Task updated successfully" });

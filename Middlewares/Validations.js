@@ -19,7 +19,12 @@ export const validations = {
       .notEmpty()
       .withMessage("Completed is required")
       .isBoolean()
-      .withMessage("Completed must be a boolean")
+      .withMessage("Completed must be a boolean"),
+    check("priority")
+      .notEmpty()
+      .withMessage("Priority is required")
+      .isIn(["LOW", "MEDIUM", "HIGH"])
+      .withMessage("Priority must be LOW, MEDIUM, or HIGH")
   ],
   allTasks: [
     check("completed")
@@ -43,7 +48,12 @@ export const validations = {
     check("completed")
       .optional()
       .isBoolean()
-      .withMessage("Completed must be a boolean")
+      .withMessage("Completed must be a boolean"),
+    check("priority")
+      .notEmpty()
+      .withMessage("Priority is required")
+      .isIn(["LOW", "MEDIUM", "HIGH"])
+      .withMessage("Priority must be LOW, MEDIUM, or HIGH")
   ]
 };
 //error handling middleware
